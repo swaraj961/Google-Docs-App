@@ -4,8 +4,11 @@
 <img src="https://img.shields.io/badge/-Node.JS-black?style=flat-square&logo=node.js&logoColor=006600"/>
 
 ## Demo :
+ 
  <img src="https://github.com/swaraj961/Google-Docs-App/blob/master/demo/demo1.gif"/>
-## Setup
+ <img src="https://github.com/swaraj961/Google-Docs-App/blob/master/demo/demo3.png"/>
+
+### Setup
 
 In the project directory, you have client & server
 
