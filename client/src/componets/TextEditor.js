@@ -2,6 +2,7 @@ import { React, useCallback , useEffect, useState} from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import {io} from 'socket.io-client';
+import {useParams} from 'react-router-dom'
 
 const TOOL_BAR_OPTIONS= [
   [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -20,8 +21,13 @@ const TOOL_BAR_OPTIONS= [
 export const TextEditor = () => {
   // const wrapperRef= useRef()
 
+
+  const Save_Time_Interval=2000;
   const [socket, setsocketState] = useState();
   const [quill, setQuillState] = useState();
+  const {id: documentID}= useParams();
+
+  // console.log(documentID);
   
 
   useEffect(() => {
@@ -31,6 +37,37 @@ export const TextEditor = () => {
       s.disconnect();
     }
   }, [])
+
+
+  // calling data from db from server that is being saved
+
+  useEffect(() => {
+    if(socket==null || quill==null) return;
+   
+    const interval = setInterval(() => {
+      socket.emit('save-document',quill.getContents())
+    },  Save_Time_Interval);
+    return () => {
+      clearInterval(interval);
+    }
+  }, [socket,quill])
+
+
+
+  // setting socket io users roomid 
+  useEffect(() => {
+
+    if(socket==null || quill==null) return;
+
+    socket.once('load-document',document=>{
+      quill.setContents(document)
+      quill.enable();
+    })
+    socket.emit('get-document',documentID);
+
+
+  }, [socket,quill, documentID])
+
 
 
  // reciving changes event
@@ -84,6 +121,8 @@ export const TextEditor = () => {
         toolbar: TOOL_BAR_OPTIONS
       },
      });
+     q.disable();
+     q.setText('Loading....')
      setQuillState(q);
     }, []
 
